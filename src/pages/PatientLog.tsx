@@ -1,6 +1,6 @@
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar/app-sidebar"
-import { Separator } from "@/components/ui/separator"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar/app-sidebar";
+import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,22 +8,22 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { ModeToggle } from "@/components/mode-toggle/mode-toggle"
-import { SearchForm } from "@/components/SearchForm/SearchForm"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import React, { useState } from "react"
-import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar"
-import { format, parse, startOfWeek, getDay, addDays } from "date-fns"
-import { ru } from "date-fns/locale"
-import { Button } from "@/components/ui/button"
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
-import "react-big-calendar/lib/css/react-big-calendar.css"
-
+} from "@/components/ui/breadcrumb";
+import { ModeToggle } from "@/components/mode-toggle/mode-toggle";
+import { SearchForm } from "@/components/SearchForm/SearchForm";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState } from "react";
+import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
+import { format, parse, startOfWeek, getDay, addDays } from "date-fns";
+import { ru } from "date-fns/locale";
+import { Button } from "@/components/ui/button";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useNavigate } from "react-router-dom"; // Для маршрутизации
 
 const locales = {
   ru,
-}
+};
 
 const localizer = dateFnsLocalizer({
   format: (date, formatStr) => format(date, formatStr, { locale: ru }),
@@ -32,37 +32,37 @@ const localizer = dateFnsLocalizer({
   startOfWeek: (date) => startOfWeek(date, { locale: ru }),
   getDay: (date) => getDay(date),
   locales,
-})
+});
 
 const CustomToolbar = (toolbar) => {
   const goToBack = () => {
-    toolbar.onNavigate("PREV")
-  }
+    toolbar.onNavigate("PREV");
+  };
 
   const goToNext = () => {
-    toolbar.onNavigate("NEXT")
-  }
+    toolbar.onNavigate("NEXT");
+  };
 
   const goToToday = () => {
-    toolbar.onNavigate("TODAY")
-  }
+    toolbar.onNavigate("TODAY");
+  };
 
   const label = () => {
-    const { date, view } = toolbar
-    let label = ""
+    const { date, view } = toolbar;
+    let label = "";
     if (view === "month") {
-      label = format(date, "LLLL yyyy", { locale: ru })
+      label = format(date, "LLLL yyyy", { locale: ru });
     } else if (view === "week") {
-      const start = startOfWeek(date, { locale: ru })
-      const end = addDays(start, 6)
+      const start = startOfWeek(date, { locale: ru });
+      const end = addDays(start, 6);
       label = `${format(start, "d MMM", { locale: ru })} - ${format(end, "d MMM", {
         locale: ru,
-      })}`
+      })}`;
     } else if (view === "day") {
-      label = format(date, "d MMMM yyyy", { locale: ru })
+      label = format(date, "d MMMM yyyy", { locale: ru });
     }
-    return label.charAt(0).toUpperCase() + label.slice(1)
-  }
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  };
 
   return (
       <div className="flex items-center justify-between mb-4">
@@ -79,14 +79,28 @@ const CustomToolbar = (toolbar) => {
         </div>
         <span className="text-lg font-bold">{label()}</span>
       </div>
-  )
-}
+  );
+};
 
 export const PatientLog = () => {
-  const [view, setView] = useState("week")
+  const navigate = useNavigate(); // Используем для навигации
+  const [view, setView] = useState("week");
+
+  // Моковые события
   const events = [
-    // события
-  ]
+    {
+      title: "Запись на консультацию",
+      start: new Date(2024, 10, 23, 10, 0), // 23 ноября 2024, 10:00
+      end: new Date(2024, 10, 23, 11, 0), // 23 ноября 2024, 11:00
+      id: 1,
+    },
+    {
+      title: "Запись на обследование",
+      start: new Date(2024, 10, 23, 14, 0), // 23 ноября 2024, 14:00
+      end: new Date(2024, 10, 23, 15, 0), // 23 ноября 2024, 15:00
+      id: 2,
+    },
+  ];
 
   return (
       <SidebarProvider>
@@ -98,15 +112,16 @@ export const PatientLog = () => {
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">Основные</BreadcrumbLink>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Лог информации</BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage>Календарь записей</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
+
             </div>
             <ModeToggle />
           </header>
@@ -116,7 +131,6 @@ export const PatientLog = () => {
               <h2 className="text-3xl font-semibold tracking-tight">
                 Календарь записей
               </h2>
-              {/* <DatePickerWithRange /> */}
             </div>
             <Tabs defaultValue="week" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
@@ -132,45 +146,41 @@ export const PatientLog = () => {
               </TabsList>
             </Tabs>
 
-              <BigCalendar
-                  localizer={localizer}
-                  events={events}
-                  view={view}
-                  onView={() => {}}
-                  selectable
-                  style={{ height: "80vh" }}
-                  onSelectEvent={(event) => {
-                    // Обработка события
-                  }}
-                  onSelectSlot={(slotInfo) => {
-                    // Обработка выбора слота
-                  }}
-                  components={{
-                    toolbar: CustomToolbar,
-                  }}
-                  messages={{
-                    date: "Дата",
-                    time: "Время",
-                    event: "Событие",
-                    allDay: "Весь день",
-                    week: "Неделя",
-                    work_week: "Рабочая неделя",
-                    day: "День",
-                    month: "Месяц",
-                    previous: "Назад",
-                    next: "Вперёд",
-                    yesterday: "Вчера",
-                    tomorrow: "Завтра",
-                    today: "Сегодня",
-                    agenda: "Повестка дня",
-                    noEventsInRange: "Нет событий в данном промежутке.",
-                    showMore: (total) => `+ Ещё (${total})`,
-                  }}
-                  className="rounded-lg shadow-lg p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-
+            <BigCalendar
+                localizer={localizer}
+                events={events}
+                view={view}
+                onView={() => {}}
+                selectable
+                style={{ height: "80vh" }}
+                onSelectEvent={(event) => {
+                  navigate("/log-info"); // Перенаправление на LogInfo
+                }}
+                components={{
+                  toolbar: CustomToolbar,
+                }}
+                messages={{
+                  date: "Дата",
+                  time: "Время",
+                  event: "Событие",
+                  allDay: "Весь день",
+                  week: "Неделя",
+                  work_week: "Рабочая неделя",
+                  day: "День",
+                  month: "Месяц",
+                  previous: "Назад",
+                  next: "Вперёд",
+                  yesterday: "Вчера",
+                  tomorrow: "Завтра",
+                  today: "Сегодня",
+                  agenda: "Повестка дня",
+                  noEventsInRange: "Нет событий в данном промежутке.",
+                  showMore: (total) => `+ Ещё (${total})`,
+                }}
+                className="rounded-lg shadow-lg p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            />
+          </div>
         </SidebarInset>
       </SidebarProvider>
-  )
-}
+  );
+};
